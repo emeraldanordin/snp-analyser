@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+output/*
+!output/.gitkeep
+.DS_Store
+*.log
+.vscode/
+*.code-workspace
+
+# Real strain/sample data -- do not publish without explicit permission
+# from your supervisor/lab. Ask before removing these lines.
+data/*.vcf
+data/*.vcf.gz
+!data/.gitkeep

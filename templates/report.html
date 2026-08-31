@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SNP Annotation Analysis Report -- {{ vcf_filename }}</title>
+<style>
+{{ css_content }}
+</style>
+</head>
+<body>
+
+<header class="report-header">
+  <h1>SNP Annotation Analysis Report</h1>
+  <p class="meta-line"><strong>Input VCF:</strong> {{ vcf_filename }}</p>
+  <p class="meta-line"><strong>Date generated:</strong> {{ generated_date }}</p>
+  <p class="meta-line"><strong>Sample(s):</strong> {{ samples|join(', ') }}</p>
+  <p class="meta-line"><strong>Chromosome/contig:</strong> {{ contigs|join(', ') }}</p>
+</header>
+
+<section id="summary">
+  <h2>1. Summary</h2>
+  <div class="card-grid">
+    <div class="stat-card"><div class="value">{{ stats.total_snps }}</div><div class="label">Total SNPs</div></div>
+    <div class="stat-card"><div class="value">{{ stats.annotated_snps }}</div><div class="label">Annotated ({{ stats.annotated_pct }}%)</div></div>
+    <div class="stat-card"><div class="value">{{ stats.unannotated_snps }}</div><div class="label">Unannotated ({{ stats.unannotated_pct }}%)</div></div>
+    <div class="stat-card"><div class="value">{{ stats.affected_genes }}</div><div class="label">Affected Genes</div></div>
+    <div class="stat-card"><div class="value">{{ stats.unique_positions }}</div><div class="label">Unique Positions</div></div>
+  </div>
+
+  <h3>Parsing integrity</h3>
+  <table>
+    <tr><th>Total input records</th><td>{{ parse_report.total_records }}</td></tr>
+    <tr><th>Successfully parsed rows</th><td>{{ parse_report.total_rows }}</td></tr>
+    <tr><th>Annotated rows</th><td>{{ parse_report.annotated_rows }}</td></tr>
+    <tr><th>Unannotated rows</th><td>{{ parse_report.unannotated_rows }}</td></tr>
+    <tr><th>Failed records</th><td>{{ parse_report.failed_records }}</td></tr>
+    <tr><th>Warnings</th><td>{{ parse_report.warning_count }}</td></tr>
+  </table>
+</section>
+
+<section id="mutation-stats">
+  <h2>2. Mutation Category Statistics</h2>
+  <table>
+    <thead><tr><th>Category</th><th>Count</th><th>Percentage</th></tr></thead>
+    <tbody>
+      {% for cat, info in stats.categories.items() %}
+      <tr><td>{{ cat }}</td><td>{{ info.count }}</td><td>{{ info.percentage }}%</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section id="titv-stats">
+  <h2>3. Transition / Transversion Statistics</h2>
+  <div class="card-grid">
+    <div class="stat-card"><div class="value">{{ stats.transitions }}</div><div class="label">Transitions</div></div>
+    <div class="stat-card"><div class="value">{{ stats.transversions }}</div><div class="label">Transversions</div></div>
+    <div class="stat-card"><div class="value">{{ stats.ti_tv_ratio }}</div><div class="label">Ti/Tv Ratio</div></div>
+    <div class="stat-card"><div class="value">{{ stats.indel_complex }}</div><div class="label">Indel / Complex</div></div>
+  </div>
+</section>
+
+<section id="graphs">
+  <h2>4. Visualisations</h2>
+  {% for name, html in figures.items() %}
+  <div class="figure-block">
+    {{ html|safe }}
+  </div>
+  {% endfor %}
+</section>
+
+<section id="gene-summary" class="landscape-section">
+  <h2>5. Gene-Level Summary</h2>
+  <p>{{ gene_table_note }}</p>
+  <div class="table-scroll">
+    {{ gene_table_html|safe }}
+  </div>
+</section>
+
+<section id="position-summary" class="landscape-section">
+  <h2>6. Position-Level Summary</h2>
+  <p>{{ position_table_note }}</p>
+  <div class="table-scroll">
+    {{ position_table_html|safe }}
+  </div>
+</section>
+
+<section id="snp-table" class="landscape-section">
+  <h2>7. Complete SNP Table</h2>
+  <p>{{ snp_table_note }}</p>
+  <div class="table-scroll">
+    {{ snp_table_html|safe }}
+  </div>
+</section>
+
+<footer class="report-footer">
+  Generated locally by SNP Annotation Analyser. No data was uploaded to an external server.
+</footer>
+
+</body>
+</html>

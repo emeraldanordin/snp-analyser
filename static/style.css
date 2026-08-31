@@ -1,0 +1,168 @@
+/* SNP Annotation Analyzer -- report styling
+   Designed for both screen viewing and WeasyPrint PDF rendering. */
+
+:root {
+  --color-text: #1a1a1a;
+  --color-muted: #5a5a5a;
+  --color-border: #d8dde3;
+  --color-accent: #1f5f8b;
+  --color-accent-light: #eaf2f8;
+  --color-bg: #ffffff;
+  --color-missense: #d9822b;
+  --color-synonymous: #3a8f5c;
+  --color-nonsense: #c0392b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: "Helvetica Neue", Arial, "Segoe UI", sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.5;
+  margin: 0;
+  padding: 0 2rem 3rem;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+header.report-header {
+  border-bottom: 3px solid var(--color-accent);
+  padding: 2rem 0 1rem;
+  margin-bottom: 2rem;
+}
+
+header.report-header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.9rem;
+  color: var(--color-accent);
+}
+
+.meta-line {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  margin: 0.15rem 0;
+}
+
+section {
+  margin-bottom: 2.5rem;
+  page-break-inside: avoid;
+}
+
+h2 {
+  font-size: 1.3rem;
+  border-left: 4px solid var(--color-accent);
+  padding-left: 0.6rem;
+  margin-top: 0;
+  color: var(--color-accent);
+}
+
+h3 { font-size: 1.05rem; color: var(--color-text); }
+
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+.stat-card {
+  background: var(--color-accent-light);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  min-width: 160px;
+  flex: 1 1 160px;
+}
+
+.stat-card .value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.stat-card .label {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+
+table.wide-table {
+  font-size: 0.72rem;
+}
+
+th, td {
+  border: 1px solid var(--color-border);
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+}
+
+th {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  position: sticky;
+  top: 0;
+}
+
+tr:nth-child(even) { background: #fafbfc; }
+
+.table-scroll {
+  max-height: 520px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-missense { background: #fdf0e3; color: var(--color-missense); }
+.badge-synonymous { background: #e7f5ec; color: var(--color-synonymous); }
+.badge-nonsense { background: #fbeae7; color: var(--color-nonsense); }
+.badge-other { background: #eef0f2; color: var(--color-muted); }
+
+.figure-block {
+  margin: 1.5rem 0;
+  page-break-inside: avoid;
+}
+
+footer.report-footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+@media print {
+  body { padding: 0 1cm; max-width: none; }
+  .table-scroll { max-height: none; overflow: visible; }
+  section { page-break-inside: avoid; }
+}
+
+@page {
+  size: A4;
+  margin: 1.5cm;
+}
+
+@page wide {
+  size: A4 landscape;
+  margin: 1.2cm;
+}
+
+.landscape-section {
+  page: wide;
+}

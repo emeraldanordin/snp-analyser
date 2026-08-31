@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Multi-Strain Comparison Report -- {{ strain_names|join(', ') }}</title>
+<style>
+{{ css_content }}
+</style>
+</head>
+<body>
+
+<header class="report-header">
+  <h1>Multi-Strain Comparison Report</h1>
+  <p class="meta-line"><strong>Strains compared ({{ strain_names|length }}):</strong> {{ strain_names|join(', ') }}</p>
+  <p class="meta-line"><strong>Date generated:</strong> {{ generated_date }}</p>
+  {% if compatibility_warnings %}
+  <p class="meta-line" style="color:#c0392b;"><strong>⚠ Reference compatibility warning:</strong>
+    {% for w in compatibility_warnings %}{{ w }}<br>{% endfor %}
+  </p>
+  {% endif %}
+</header>
+
+<section id="strain-info">
+  <h2>1. Per-Strain Summary</h2>
+  <table>
+    <thead>
+      <tr><th>Strain</th><th>Total SNPs</th><th>Annotated</th><th>Affected Genes</th><th>Missense</th><th>Synonymous</th><th>Ti/Tv Ratio</th></tr>
+    </thead>
+    <tbody>
+      {% for name in strain_names %}
+      <tr>
+        <td>{{ name }}</td>
+        <td>{{ per_strain_stats[name].total_snps }}</td>
+        <td>{{ per_strain_stats[name].annotated_snps }} ({{ per_strain_stats[name].annotated_pct }}%)</td>
+        <td>{{ per_strain_stats[name].affected_genes }}</td>
+        <td>{{ per_strain_stats[name].categories.get('Missense', {}).get('count', 0) }}</td>
+        <td>{{ per_strain_stats[name].categories.get('Silent / Synonymous', {}).get('count', 0) }}</td>
+        <td>{{ per_strain_stats[name].ti_tv_ratio }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section id="comparison-summary">
+  <h2>2. Comparison Summary</h2>
+  <div class="card-grid">
+    <div class="stat-card"><div class="value">{{ summary.total_unique_positions }}</div><div class="label">Total Unique Positions</div></div>
+    <div class="stat-card"><div class="value">{{ summary.core_positions_total }}</div><div class="label">Core Positions (all {{ summary.num_strains }} strains)</div></div>
+    <div class="stat-card"><div class="value">{{ summary.core_identical }}</div><div class="label">Core, Identical</div></div>
+    <div class="stat-card"><div class="value">{{ summary.core_variable }}</div><div class="label">Core, Variable</div></div>
+    <div class="stat-card"><div class="value">{{ summary.partial_positions }}</div><div class="label">Partial Sharing</div></div>
+    <div class="stat-card"><div class="value">{{ summary.reference_discrepancies }}</div><div class="label">Reference Discrepancies</div></div>
+    <div class="stat-card"><div class="value">{{ summary.core_genes }}</div><div class="label">Core Genes</div></div>
+    <div class="stat-card"><div class="value">{{ summary.total_genes }}</div><div class="label">Total Genes Affected (any strain)</div></div>
+  </div>
+
+  <h3>Strain-Specific Position Counts</h3>
+  <table>
+    <thead><tr><th>Strain</th><th>Unique Positions</th></tr></thead>
+    <tbody>
+      {% for name, count in summary.strain_unique_counts.items() %}
+      <tr><td>{{ name }}</td><td>{{ count }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section id="graphs">
+  <h2>3. Comparison Visualisations</h2>
+  {% for name, html in figures.items() %}
+  <div class="figure-block">
+    {{ html|safe }}
+  </div>
+  {% endfor %}
+</section>
+
+<section id="gene-comparison" class="landscape-section">
+  <h2>4. Gene-Level Comparison</h2>
+  <p>{{ gene_table_note }}</p>
+  <div class="table-scroll">
+    {{ gene_comparison_html|safe }}
+  </div>
+</section>
+
+<section id="snp-matrix" class="landscape-section">
+  <h2>5. SNP Matrix (Position-Level Comparison)</h2>
+  <p>{{ matrix_table_note }}</p>
+  <div class="table-scroll">
+    {{ snp_matrix_html|safe }}
+  </div>
+</section>
+
+<footer class="report-footer">
+  Generated locally by SNP Annotation Analyser. No data was uploaded to an external server.
+  Comparisons reflect observed genomic and annotation differences only; no claims of drug resistance,
+  virulence, pathogenicity, or evolutionary relationship are made unless explicitly supplied in the input data.
+</footer>
+
+</body>
+</html>

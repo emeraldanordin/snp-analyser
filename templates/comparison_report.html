@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ strain1_name }} vs {{ strain2_name }} -- Strain Comparison Report</title>
+<style>
+{{ css_content }}
+</style>
+</head>
+<body>
+
+<header class="report-header">
+  <h1>{{ strain1_name }} vs {{ strain2_name }} — Strain Comparison Report</h1>
+  <p class="meta-line"><strong>{{ strain1_name }} VCF:</strong> {{ vcf1_filename }}</p>
+  <p class="meta-line"><strong>{{ strain2_name }} VCF:</strong> {{ vcf2_filename }}</p>
+  <p class="meta-line"><strong>Date generated:</strong> {{ generated_date }}</p>
+  {% if compatibility_warnings %}
+  <p class="meta-line" style="color:#c0392b;"><strong>⚠ Reference compatibility warning:</strong>
+    {% for w in compatibility_warnings %}{{ w }}<br>{% endfor %}
+  </p>
+  {% endif %}
+</header>
+
+<section id="strain-info">
+  <h2>1. Strain Information</h2>
+  <table>
+    <thead><tr><th></th><th>{{ strain1_name }}</th><th>{{ strain2_name }}</th></tr></thead>
+    <tbody>
+      <tr><th>Total SNPs</th><td>{{ stats1.total_snps }}</td><td>{{ stats2.total_snps }}</td></tr>
+      <tr><th>Annotated</th><td>{{ stats1.annotated_snps }} ({{ stats1.annotated_pct }}%)</td><td>{{ stats2.annotated_snps }} ({{ stats2.annotated_pct }}%)</td></tr>
+      <tr><th>Affected genes</th><td>{{ stats1.affected_genes }}</td><td>{{ stats2.affected_genes }}</td></tr>
+      <tr><th>Missense</th><td>{{ stats1.categories.get('Missense', {}).get('count', 0) }}</td><td>{{ stats2.categories.get('Missense', {}).get('count', 0) }}</td></tr>
+      <tr><th>Synonymous</th><td>{{ stats1.categories.get('Silent / Synonymous', {}).get('count', 0) }}</td><td>{{ stats2.categories.get('Silent / Synonymous', {}).get('count', 0) }}</td></tr>
+      <tr><th>Transitions</th><td>{{ stats1.transitions }}</td><td>{{ stats2.transitions }}</td></tr>
+      <tr><th>Transversions</th><td>{{ stats1.transversions }}</td><td>{{ stats2.transversions }}</td></tr>
+      <tr><th>Ti/Tv ratio</th><td>{{ stats1.ti_tv_ratio }}</td><td>{{ stats2.ti_tv_ratio }}</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="comparison-summary">
+  <h2>2. Comparison Summary</h2>
+  <div class="card-grid">
+    <div class="stat-card"><div class="value">{{ summary.total_unique_positions }}</div><div class="label">Total Unique Positions</div></div>
+    <div class="stat-card"><div class="value">{{ summary.shared_positions }}</div><div class="label">Shared Positions</div></div>
+    <div class="stat-card"><div class="value">{{ summary[strain1_name + '_specific'] }}</div><div class="label">{{ strain1_name }}-specific</div></div>
+    <div class="stat-card"><div class="value">{{ summary[strain2_name + '_specific'] }}</div><div class="label">{{ strain2_name }}-specific</div></div>
+    <div class="stat-card"><div class="value">{{ summary.identical_mutations }}</div><div class="label">Identical Mutations</div></div>
+    <div class="stat-card"><div class="value">{{ summary.same_position_different_mutation }}</div><div class="label">Same Position, Different Mutation</div></div>
+    <div class="stat-card"><div class="value">{{ summary.reference_discrepancies }}</div><div class="label">Reference Discrepancies</div></div>
+    <div class="stat-card"><div class="value">{{ summary.shared_genes }}</div><div class="label">Shared Genes</div></div>
+  </div>
+</section>
+
+<section id="graphs">
+  <h2>3. Comparison Visualizations</h2>
+  {% for name, html in figures.items() %}
+  <div class="figure-block">
+    {{ html|safe }}
+  </div>
+  {% endfor %}
+</section>
+
+<section id="gene-comparison" class="landscape-section">
+  <h2>4. Gene-Level Comparison</h2>
+  <p>{{ gene_table_note }}</p>
+  <div class="table-scroll">
+    {{ gene_comparison_html|safe }}
+  </div>
+</section>
+
+<section id="position-comparison" class="landscape-section">
+  <h2>5. Position-Level Comparison</h2>
+  <p>{{ position_table_note }}</p>
+  <div class="table-scroll">
+    {{ position_comparison_html|safe }}
+  </div>
+</section>
+
+<section id="strain-specific" class="landscape-section">
+  <h2>6. Strain-Specific SNPs</h2>
+  <h3>{{ strain1_name }}-specific</h3>
+  <div class="table-scroll">
+    {{ strain1_specific_html|safe }}
+  </div>
+  <h3>{{ strain2_name }}-specific</h3>
+  <div class="table-scroll">
+    {{ strain2_specific_html|safe }}
+  </div>
+</section>
+
+<footer class="report-footer">
+  Generated locally by SNP Annotation Analyzer. No data was uploaded to an external server.
+  Comparisons reflect observed genomic and annotation differences only; no claims of drug resistance,
+  virulence, pathogenicity, or evolutionary relationship are made unless explicitly supplied in the input data.
+</footer>
+
+</body>
+</html>
