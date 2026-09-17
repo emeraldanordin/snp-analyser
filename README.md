@@ -38,7 +38,6 @@ SNP_Analyser/
 ├── static/style.css
 ├── data/                # Place VCF files here for CLI use (optional)
 ├── output/              # Generated reports/exports land here
-├── tests/
 └── requirements.txt
 ```
 
