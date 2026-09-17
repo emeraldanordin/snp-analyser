@@ -1,7 +1,7 @@
 """
 app.py
 ------
-Streamlit web interface for the SNP Annotation Analyzer.
+Streamlit web interface for the SNP Annotation Analyser.
 
 This file contains ONLY UI/display logic -- every analysis step (parsing,
 annotation, classification, grouping, statistics, comparison, export,
